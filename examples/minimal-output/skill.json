@@ -1,0 +1,71 @@
+{
+  "skillName": "学校通知执笔人",
+  "handle": "学校通知执笔人",
+  "description": "用于生成校内通知类事务文档。",
+  "applicableScopes": ["学校通知", "校内事务通知"],
+  "userInputFields": ["通知事项", "对象范围", "时间", "地点", "具体要求", "发布单位"],
+  "documentStructureTemplate": ["标题", "通知背景", "事项说明", "时间地点", "工作要求", "落款"],
+  "style_rules": {
+    "must": ["缺失事实时使用【可替换占位符】，不得自行补全具体时间、地点、单位、数据或政策依据。"],
+    "recommended": ["正文宜按事项分条列项，便于阅读和执行。"],
+    "optional": ["可使用“请各相关单位按要求落实”等稳妥提示语。"]
+  },
+  "rule_evidence": {
+    "缺失事实时使用【可替换占位符】，不得自行补全具体时间、地点、单位、数据或政策依据。": {
+      "support_count": 3,
+      "support_doc_ids": ["doc_001", "doc_002", "doc_003"],
+      "scope": "all",
+      "confidence": "high"
+    }
+  },
+  "common_expression_library": ["为做好【事项】，现将有关事项通知如下。", "请各相关单位按要求落实。"],
+  "scenario_variants": [],
+  "forbidden": ["不得复用样本文档中的具体人名、地点、活动名和一次性安排。"],
+  "privacy_filters": [],
+  "case_specific_exclusions": [],
+  "generation_steps": ["确认通知事项", "补齐变量槽位", "按结构生成正文", "执行自检"],
+  "self_checklist": ["是否存在编造事实", "是否遗漏必要时间地点", "是否复用个案信息"],
+  "mixed_sample_warning": false,
+  "aggregation_policy": "提炼同类学校通知的共同结构与文风规则。",
+  "overall_confidence": "high",
+  "feedback_classification": {
+    "global_skill_rules": [],
+    "current_task_only_facts": [],
+    "forbidden_or_negative_preferences": []
+  },
+  "test_report": {
+    "test_cases": [
+      {
+        "case_id": "normal_test",
+        "passed": true,
+        "score": 90,
+        "issues": [],
+        "test_document_markdown": ""
+      },
+      {
+        "case_id": "missing_fact_test",
+        "passed": true,
+        "score": 88,
+        "issues": [],
+        "test_document_markdown": ""
+      },
+      {
+        "case_id": "leakage_test",
+        "passed": true,
+        "score": 95,
+        "issues": [],
+        "test_document_markdown": ""
+      }
+    ],
+    "overall_result": {
+      "passed": true,
+      "score": 91,
+      "must_rule_miss_count": 0,
+      "privacy_leak_count": 0,
+      "case_specific_leak_count": 0,
+      "fabrication_risk_count": 0,
+      "save_allowed": true
+    }
+  }
+}
+

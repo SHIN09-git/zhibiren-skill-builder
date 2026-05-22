@@ -1,0 +1,20 @@
+{
+  "name": "zhibiren-skill-builder",
+  "version": "0.1.0",
+  "description": "A Codex skill for building reusable Chinese document-writing 执笔人 from multiple sample documents.",
+  "type": "module",
+  "private": false,
+  "license": "MIT",
+  "scripts": {
+    "validate:example": "node skills/zhibiren-skill-builder/scripts/validate-skill-json.mjs examples/minimal-output/skill.json",
+    "check": "npm run validate:example"
+  },
+  "keywords": [
+    "codex-skill",
+    "writing",
+    "chinese-documents",
+    "skill-builder",
+    "zhibiren"
+  ]
+}
+

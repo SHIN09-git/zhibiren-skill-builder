@@ -1,0 +1,4 @@
+display_name: 执笔人生成器
+short_description: 从多篇同类中文文档中提炼可靠、可测试、可调用的执笔人。
+default_prompt: 请把我提供的多篇同类文档提炼成一个可复用的执笔人，输出 Skill说明.md 和 skill.json，并说明质量测试结果。
+
