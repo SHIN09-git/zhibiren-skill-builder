@@ -15,6 +15,7 @@ try {
 }
 
 const errors = [];
+if (!isRecord(data)) fail("JSON root must be an object.");
 const styleRules = data.style_rules || {};
 const mustRules = Array.isArray(styleRules.must) ? styleRules.must : [];
 const evidence = data.rule_evidence || {};
@@ -22,9 +23,12 @@ const evidence = data.rule_evidence || {};
 if (!data.skillName) errors.push("skillName is required.");
 if (!data.handle) errors.push("handle is required.");
 if (!data.description) errors.push("description is required.");
-if (!data.style_rules || typeof data.style_rules !== "object") errors.push("style_rules is required.");
-if (!Array.isArray(styleRules.recommended || [])) errors.push("style_rules.recommended must be an array.");
-if (!Array.isArray(styleRules.optional || [])) errors.push("style_rules.optional must be an array.");
+if (!isRecord(data.style_rules)) errors.push("style_rules must be an object.");
+for (const field of ["must", "recommended", "optional"]) {
+  if (field in Object(styleRules) && !Array.isArray(styleRules[field])) {
+    errors.push(`style_rules.${field} must be an array.`);
+  }
+}
 
 for (const rule of mustRules) {
   const normalizedRule = typeof rule === "string" ? rule : rule?.rule;
@@ -33,23 +37,31 @@ for (const rule of mustRules) {
     errors.push("style_rules.must contains an empty rule.");
     continue;
   }
-  if (!item) {
+  if (!Object.hasOwn(evidence, normalizedRule) || !isRecord(item)) {
     errors.push(`Missing rule_evidence for must rule: ${normalizedRule}`);
     continue;
   }
-  if (Number(item.support_count || 0) < 2) {
-    errors.push(`Must rule support_count is below 2: ${normalizedRule}`);
+  if (!Number.isInteger(item.support_count) || item.support_count < 2) {
+    errors.push(`Must rule support_count must be an integer of at least 2: ${normalizedRule}`);
   }
-  if (String(item.confidence || "low").toLowerCase() === "low") {
-    errors.push(`Must rule confidence cannot be low: ${normalizedRule}`);
+  if (!["medium", "high"].includes(item.confidence)) {
+    errors.push(`Must rule confidence must be medium or high: ${normalizedRule}`);
   }
-  if (!Array.isArray(item.support_doc_ids) || item.support_doc_ids.length < 2) {
-    errors.push(`Must rule needs at least two support_doc_ids: ${normalizedRule}`);
+  const documentIds = item.support_doc_ids;
+  if (!Array.isArray(documentIds) ||
+      documentIds.some(id => typeof id !== "string" || !id.trim()) ||
+      new Set(documentIds.map(id => typeof id === "string" ? id.trim() : id)).size < 2) {
+    errors.push(`Must rule needs at least two distinct, nonblank support_doc_ids: ${normalizedRule}`);
   }
 }
 
 const testReport = data.test_report || data.qualityReport?.test_report || {};
 const overall = testReport.overall_result || {};
+for (const field of ["privacy_leak_count", "case_specific_leak_count", "fabrication_risk_count"]) {
+  if (field in Object(overall) && (!Number.isInteger(overall[field]) || overall[field] < 0)) {
+    errors.push(`${field} must be a nonnegative integer.`);
+  }
+}
 const blocked =
   Number(overall.privacy_leak_count || 0) > 0 ||
   Number(overall.case_specific_leak_count || 0) > 0 ||
@@ -72,5 +84,9 @@ console.log(`OK: ${file}`);
 function fail(message) {
   console.error(message);
   process.exit(1);
+}
+
+function isRecord(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 

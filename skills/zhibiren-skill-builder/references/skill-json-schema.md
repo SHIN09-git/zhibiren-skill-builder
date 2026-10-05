@@ -66,9 +66,9 @@
 
 证据要求：
 
-- `support_count >= 2`
+- `support_count` 必须是至少为 2 的整数
 - `confidence` 为 `medium` 或 `high`
-- `support_doc_ids` 至少 2 个
+- `support_doc_ids` 至少包含 2 个不同的非空文档 ID
 - `scope` 可为 `all`、`document_type`、`scenario`、`section`
 
 ## 禁止进入强规则的内容
@@ -85,6 +85,8 @@
 ## 测试门禁
 
 `test_report.overall_result.save_allowed` 为 `false` 时，不应保存为正式执笔人。
+
+计数必须是非负整数，不能用字符串、负数或空值绕过门禁。
 
 以下任一计数大于 0 时必须拦截：
 

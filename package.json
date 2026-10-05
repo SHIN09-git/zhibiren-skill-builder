@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "validate:example": "node skills/zhibiren-skill-builder/scripts/validate-skill-json.mjs examples/minimal-output/skill.json",
-    "check": "npm run validate:example"
+    "test": "node --test",
+    "check": "npm run validate:example && npm test"
   },
   "keywords": [
     "codex-skill",
